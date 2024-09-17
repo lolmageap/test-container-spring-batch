@@ -9,8 +9,11 @@ spring:
   batch:
     job:
       enabled: false
+      name: testJob
   datasource:
-    url: jdbc:mysql://localhost:3306/commerce
-    username: root
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
     hikari:
       maximum-pool-size: 5
