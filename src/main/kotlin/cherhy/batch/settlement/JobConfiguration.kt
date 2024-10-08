@@ -1,6 +1,5 @@
 package cherhy.batch.settlement
 
-import org.springframework.batch.core.Step
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
@@ -21,11 +20,10 @@ class JobConfiguration(
     private val dataSource: DataSource,
     private val jobRepository: JobRepository,
     private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
+    private val transactionManager: JdbcTransactionManager,
 ) {
     @Bean
-    fun firstStep(
-        transactionManager: JdbcTransactionManager,
-    ) =
+    fun firstStep() =
         StepBuilder(
             "startStep",
             jobRepository,
@@ -36,9 +34,7 @@ class JobConfiguration(
             .build()
 
     @Bean
-    fun lastStep(
-        transactionManager: JdbcTransactionManager,
-    ) =
+    fun lastStep() =
         StepBuilder(
             "lastStep",
             jobRepository,
@@ -48,13 +44,10 @@ class JobConfiguration(
             .build()
 
     @Bean
-    fun job(
-        firstStep: Step,
-        lastStep: Step,
-    ) =
+    fun job() =
         JobBuilder("exampleJob", jobRepository)
-            .start(firstStep)
-            .next(lastStep)
+            .start(firstStep())
+            .next(lastStep())
             .listener(exampleJobCompletionNotificationListener)
             .build()
 
