@@ -22,14 +22,13 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("io.github.microutils:kotlin-logging:3.0.5")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-batch")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 
@@ -42,6 +41,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
     testImplementation("org.springframework.batch:spring-batch-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
