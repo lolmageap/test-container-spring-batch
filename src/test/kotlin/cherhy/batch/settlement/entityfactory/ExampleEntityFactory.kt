@@ -1,10 +1,11 @@
 package cherhy.batch.settlement.entityfactory
 
 import cherhy.batch.settlement.Example
-import cherhy.batch.settlement.randomize
+import cherhy.batch.settlement.lib.randomize
 import org.jeasy.random.EasyRandom
 import org.jeasy.random.EasyRandomParameters
 import org.jeasy.random.randomizers.text.StringRandomizer
+import org.springframework.data.mapping.toDotPath
 import kotlin.random.Random
 
 internal object ExampleEntityFactory {
@@ -22,7 +23,7 @@ internal object ExampleEntityFactory {
     fun generateRandom(): Example {
         val parameter = EasyRandomParameters()
             .excludeField {
-                it.name == "id"
+                it.name == Example::id.toDotPath()
             }
             .randomize(Example::name) {
                 StringRandomizer(1, 10, Random.nextLong(1, 100)).randomValue

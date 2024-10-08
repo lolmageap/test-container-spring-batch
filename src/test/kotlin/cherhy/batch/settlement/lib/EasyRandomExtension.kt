@@ -1,4 +1,4 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.lib
 
 import org.jeasy.random.EasyRandom
 import org.jeasy.random.EasyRandomParameters
