@@ -1,4 +1,4 @@
-package kotlin.batch.settlement
+package cherhy.batch.settlement
 
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean
 import org.springframework.context.annotation.Bean

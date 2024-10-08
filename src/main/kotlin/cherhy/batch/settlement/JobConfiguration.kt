@@ -1,4 +1,4 @@
-package kotlin.batch.settlement
+package cherhy.batch.settlement
 
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.StepContribution
@@ -42,7 +42,7 @@ class JobConfiguration(
         StepBuilder(
             "lastStep",
             jobRepository,
-        ).tasklet({ contribution: StepContribution?, chunkContext: ChunkContext? ->
+        ).tasklet({ _: StepContribution?, _: ChunkContext? ->
             RepeatStatus.FINISHED
         }, transactionManager)
             .build()

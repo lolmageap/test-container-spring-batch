@@ -1,4 +1,4 @@
-package kotlin.batch.settlement
+package cherhy.batch.settlement
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.boot.autoconfigure.SpringBootApplication
