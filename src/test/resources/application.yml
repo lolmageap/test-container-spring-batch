@@ -1,10 +1,23 @@
 spring:
+  profiles:
+    active: test
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:15432/cherhy
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql://localhost:15432/cherhy
     username: postgres
     password: 1234
   batch:
-    job:
-      enabled: true
-      name: testJob
+    jdbc:
+      initialize-schema: always
+      table-prefix: BATCH_
+  flyway:
+    enabled: false
+
+#  spring:
+#  profiles:
+#    active: test
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:15432/cherhy
+#    username: postgres
+#    password: 1234

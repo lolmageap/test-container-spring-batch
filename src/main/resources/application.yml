@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  profiles:
+    active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/cherhy
@@ -15,3 +17,7 @@ spring:
     job:
       enabled: false
       name: testJob
+  data:
+    jpa:
+      repositories:
+        enabled: false
