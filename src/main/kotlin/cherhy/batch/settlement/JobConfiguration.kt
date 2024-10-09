@@ -1,5 +1,12 @@
 package cherhy.batch.settlement
 
+import cherhy.batch.settlement.BatchProperties.CHUNK_SIZE
+import cherhy.batch.settlement.BatchProperties.ItemProcessor.EXAMPLE_ITEM_PROCESSOR
+import cherhy.batch.settlement.BatchProperties.ItemReader.EXAMPLE_ITEM_READER
+import cherhy.batch.settlement.BatchProperties.ItemWriter.EXAMPLE_ITEM_WRITER
+import cherhy.batch.settlement.BatchProperties.Job.EXAMPLE_JOB
+import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_FIRST_STEP
+import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_LAST_STEP
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
@@ -22,10 +29,10 @@ class JobConfiguration(
     private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
     private val transactionManager: JdbcTransactionManager,
 ) {
-    @Bean
+    @Bean(EXAMPLE_FIRST_STEP)
     fun firstStep() =
         StepBuilder(
-            "startStep",
+            EXAMPLE_FIRST_STEP,
             jobRepository,
         ).chunk<Example, Example>(CHUNK_SIZE, transactionManager)
             .reader(exampleItemReader())
@@ -33,39 +40,39 @@ class JobConfiguration(
             .writer(exampleItemWriter())
             .build()
 
-    @Bean
+    @Bean(EXAMPLE_LAST_STEP)
     fun lastStep() =
         StepBuilder(
-            "lastStep",
+            EXAMPLE_LAST_STEP,
             jobRepository,
         ).tasklet({ _: StepContribution?, _: ChunkContext? ->
             RepeatStatus.FINISHED
         }, transactionManager)
             .build()
 
-    @Bean
+    @Bean(EXAMPLE_JOB)
     fun job() =
-        JobBuilder("exampleJob", jobRepository)
+        JobBuilder(EXAMPLE_JOB, jobRepository)
             .start(firstStep())
             .next(lastStep())
             .listener(exampleJobCompletionNotificationListener)
             .build()
 
-    @Bean
+    @Bean(EXAMPLE_ITEM_READER)
     fun exampleItemReader() =
         JdbcCursorItemReaderBuilder<Example>()
-            .name("exampleItemReader")
+            .name(EXAMPLE_ITEM_READER)
             .dataSource(dataSource)
             .fetchSize(CHUNK_SIZE)
             .sql("SELECT id, name, age FROM example")
             .rowMapper(BeanPropertyRowMapper(Example::class.java))
             .build()
 
-    @Bean
+    @Bean(EXAMPLE_ITEM_PROCESSOR)
     fun exampleItemProcessor() =
         ExampleItemProcessor()
 
-    @Bean
+    @Bean(EXAMPLE_ITEM_WRITER)
     fun exampleItemWriter(
     ) =
         JdbcBatchItemWriterBuilder<Example>()
