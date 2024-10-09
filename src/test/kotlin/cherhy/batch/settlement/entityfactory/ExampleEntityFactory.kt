@@ -5,7 +5,6 @@ import cherhy.batch.settlement.lib.randomize
 import org.jeasy.random.EasyRandom
 import org.jeasy.random.EasyRandomParameters
 import org.jeasy.random.randomizers.text.StringRandomizer
-import org.springframework.data.mapping.toDotPath
 import kotlin.random.Random
 
 internal object ExampleEntityFactory {
@@ -23,7 +22,7 @@ internal object ExampleEntityFactory {
     fun generateRandom(): Example {
         val parameter = EasyRandomParameters()
             .excludeField {
-                it.name == Example::id.toDotPath()
+                it.name == Example::id.name
             }
             .randomize(Example::name) {
                 StringRandomizer(1, 10, Random.nextLong(1, 100)).randomValue

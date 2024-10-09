@@ -3,7 +3,6 @@ package cherhy.batch.settlement.lib
 import org.jeasy.random.EasyRandom
 import org.jeasy.random.EasyRandomParameters
 import org.jeasy.random.api.Randomizer
-import org.springframework.data.mapping.toDotPath
 import java.util.stream.LongStream
 import kotlin.reflect.KProperty
 
@@ -19,7 +18,7 @@ internal fun <T, R> EasyRandomParameters.randomize(
     randomizer: Randomizer<R>,
 ): EasyRandomParameters =
     randomize(
-        { it.name == property.toDotPath() },
+        { it.name == property.name },
         randomizer,
     )
 
