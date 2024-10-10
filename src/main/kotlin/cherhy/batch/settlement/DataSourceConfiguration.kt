@@ -53,7 +53,13 @@ class DataSourceConfiguration(
             this[SLAVE] = slaveDataSource
         }
 
-        return RoutingDataSource().apply {
+        return object : AbstractRoutingDataSource() {
+            override fun determineCurrentLookupKey() =
+                when {
+                    TransactionSynchronizationManager.isCurrentTransactionReadOnly() -> SLAVE
+                    else -> MASTER
+                }
+        }.apply {
             setTargetDataSources(dataSources)
             setDefaultTargetDataSource(masterDataSource)
         }
@@ -90,12 +96,4 @@ class DataSourceConfiguration(
         @Qualifier(MASTER_DATA_SOURCE) masterDataSource: DataSource,
     ) =
         JdbcTemplate(masterDataSource)
-}
-
-class RoutingDataSource: AbstractRoutingDataSource() {
-    override fun determineCurrentLookupKey() =
-        when {
-            TransactionSynchronizationManager.isCurrentTransactionReadOnly() -> SLAVE
-            else -> MASTER
-        }
 }
