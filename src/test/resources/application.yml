@@ -1,10 +1,17 @@
+#file: noinspection SpringBootApplicationYaml
 spring:
   profiles:
     active: test
   datasource:
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgresql://localhost:15432/cherhy
-    username: postgres
-    password: 1234
+    master:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      url: jdbc:tc:postgresql:15.0:///cherhy
+      username: postgres
+      password: 1234
+    slave:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      url: jdbc:tc:postgresql:15.0:///cherhy
+      username: postgres
+      password: 1234
   flyway:
     enabled: false
