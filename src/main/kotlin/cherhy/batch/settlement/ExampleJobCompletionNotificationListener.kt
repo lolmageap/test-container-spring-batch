@@ -1,14 +1,16 @@
 package cherhy.batch.settlement
 
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
 import mu.KotlinLogging
 import org.springframework.batch.core.annotation.AfterJob
 import org.springframework.batch.core.annotation.BeforeJob
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class ExampleJobCompletionNotificationListener(
-    private val jdbcTemplate: JdbcTemplate,
+    @Qualifier(MASTER_JDBC_TEMPLATE) private val jdbcTemplate: JdbcTemplate,
 ) {
     private val logger = KotlinLogging.logger {}
 

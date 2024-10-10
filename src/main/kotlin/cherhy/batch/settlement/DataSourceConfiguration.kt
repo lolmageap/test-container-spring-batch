@@ -1,5 +1,14 @@
 package cherhy.batch.settlement
 
+import cherhy.batch.settlement.ConfigurationConstants.Bean.JDBC_TEMPLATE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
+import cherhy.batch.settlement.ConfigurationConstants.Bean.ROUTING_DATA_SOURCE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.SLAVE_DATA_SOURCE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.TRANSACTION_MANAGER
+import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.MASTER
+import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.SLAVE
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
@@ -33,7 +42,7 @@ class DataSourceConfiguration(
             .password(dataSourceProperty.slave.password)
             .build()!!
 
-    @Bean
+    @Bean(ROUTING_DATA_SOURCE)
     @DependsOn(MASTER_DATA_SOURCE, SLAVE_DATA_SOURCE)
     fun routingDataSource(
         @Qualifier(MASTER_DATA_SOURCE) masterDataSource: DataSource,
@@ -58,17 +67,29 @@ class DataSourceConfiguration(
     ) =
         LazyConnectionDataSourceProxy(routingDataSource)
 
-    @Bean
+    @Bean(TRANSACTION_MANAGER)
     fun transactionManager(
         dataSource: DataSource,
     ) =
         JdbcTransactionManager(dataSource)
 
-    @Bean
+    @Bean(MASTER_TRANSACTION_MANAGER)
+    fun masterTransactionManager(
+        @Qualifier(MASTER_DATA_SOURCE) masterDataSource: DataSource,
+    ) =
+        JdbcTransactionManager(masterDataSource)
+
+    @Bean(JDBC_TEMPLATE)
     fun jdbcTemplate(
         dataSource: DataSource,
     ) =
         JdbcTemplate(dataSource)
+
+    @Bean(MASTER_JDBC_TEMPLATE)
+    fun masterJdbcTemplate(
+        @Qualifier(MASTER_DATA_SOURCE) masterDataSource: DataSource,
+    ) =
+        JdbcTemplate(masterDataSource)
 }
 
 class RoutingDataSource: AbstractRoutingDataSource() {
@@ -78,9 +99,3 @@ class RoutingDataSource: AbstractRoutingDataSource() {
             else -> MASTER
         }
 }
-
-private const val ROUTING_DATA_SOURCE = "routingDataSource"
-private const val MASTER_DATA_SOURCE = "masterDataSource"
-private const val SLAVE_DATA_SOURCE = "slaveDataSource"
-private const val MASTER = "master"
-private const val SLAVE = "slave"

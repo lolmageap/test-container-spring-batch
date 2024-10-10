@@ -7,6 +7,8 @@ import cherhy.batch.settlement.BatchProperties.ItemWriter.EXAMPLE_ITEM_WRITER
 import cherhy.batch.settlement.BatchProperties.Job.EXAMPLE_JOB
 import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_FIRST_STEP
 import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_LAST_STEP
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
+import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
@@ -16,6 +18,7 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder
 import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.BeanPropertyRowMapper
@@ -24,10 +27,10 @@ import javax.sql.DataSource
 
 @Configuration
 class JobConfiguration(
-    private val dataSource: DataSource,
     private val jobRepository: JobRepository,
+    @Qualifier(MASTER_DATA_SOURCE) private val masterDataSource: DataSource,
     private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
-    private val transactionManager: JdbcTransactionManager,
+    @Qualifier(MASTER_TRANSACTION_MANAGER) private val transactionManager: JdbcTransactionManager,
 ) {
     @Bean(EXAMPLE_FIRST_STEP)
     fun firstStep() =
@@ -62,7 +65,7 @@ class JobConfiguration(
     fun exampleItemReader() =
         JdbcCursorItemReaderBuilder<Example>()
             .name(EXAMPLE_ITEM_READER)
-            .dataSource(dataSource)
+            .dataSource(masterDataSource)
             .fetchSize(CHUNK_SIZE)
             .sql("SELECT id, name, age FROM example")
             .rowMapper(BeanPropertyRowMapper(Example::class.java))
@@ -76,7 +79,7 @@ class JobConfiguration(
     fun exampleItemWriter(
     ) =
         JdbcBatchItemWriterBuilder<Example>()
-            .dataSource(dataSource)
+            .dataSource(masterDataSource)
             .itemSqlParameterSourceProvider(BeanPropertyItemSqlParameterSourceProvider())
             .sql("INSERT INTO example (id, name, age) VALUES (:id, :name, :age)")
             .beanMapped()
