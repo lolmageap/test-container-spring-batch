@@ -9,6 +9,7 @@ import cherhy.batch.settlement.ConfigurationConstants.Bean.SLAVE_DATA_SOURCE
 import cherhy.batch.settlement.ConfigurationConstants.Bean.TRANSACTION_MANAGER
 import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.MASTER
 import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.SLAVE
+import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
@@ -32,6 +33,7 @@ class DataSourceConfiguration(
             .url(dataSourceProperty.master.url)
             .username(dataSourceProperty.master.username)
             .password(dataSourceProperty.master.password)
+            .type(HikariDataSource::class.java)
             .build()!!
 
     @Bean(SLAVE_DATA_SOURCE)
@@ -40,6 +42,7 @@ class DataSourceConfiguration(
             .url(dataSourceProperty.slave.url)
             .username(dataSourceProperty.slave.username)
             .password(dataSourceProperty.slave.password)
+            .type(HikariDataSource::class.java)
             .build()!!
 
     @Bean(ROUTING_DATA_SOURCE)
