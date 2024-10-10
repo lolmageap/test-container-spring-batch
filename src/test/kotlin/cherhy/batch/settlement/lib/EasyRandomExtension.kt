@@ -16,7 +16,7 @@ internal inline fun <reified T> T.nextObject(
 internal fun <T, R> EasyRandomParameters.randomize(
     property: KProperty<T>,
     randomizer: Randomizer<R>,
-): EasyRandomParameters =
+) =
     randomize(
         { it.name == property.name },
         randomizer,
