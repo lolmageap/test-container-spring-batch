@@ -1,15 +1,21 @@
 package cherhy.batch.settlement.lib
 
-import cherhy.batch.settlement.lib.DataSource.Property.MASTER_DATABASE_SOURCE_PASSWORD
-import cherhy.batch.settlement.lib.DataSource.Property.MASTER_DATABASE_SOURCE_URL
-import cherhy.batch.settlement.lib.DataSource.Property.MASTER_DATABASE_SOURCE_USERNAME
+import cherhy.batch.settlement.lib.DataSource.Command.HOT_STANDBY
+import cherhy.batch.settlement.lib.DataSource.Command.MAX_REPLICATION_SLOTS
+import cherhy.batch.settlement.lib.DataSource.Command.MAX_WAL_SENDERS
+import cherhy.batch.settlement.lib.DataSource.Command.ADD_OPTION
+import cherhy.batch.settlement.lib.DataSource.Command.POSTGRES
+import cherhy.batch.settlement.lib.DataSource.Command.WAL_LEVEL
 import cherhy.batch.settlement.lib.DataSource.Postgres
-import cherhy.batch.settlement.lib.DataSource.Property.SLAVE_DATABASE_SOURCE_PASSWORD
-import cherhy.batch.settlement.lib.DataSource.Property.SLAVE_DATABASE_SOURCE_URL
-import cherhy.batch.settlement.lib.DataSource.Property.SLAVE_DATABASE_SOURCE_USERNAME
+import cherhy.batch.settlement.lib.DataSource.Key.MASTER_DATABASE_SOURCE_PASSWORD
+import cherhy.batch.settlement.lib.DataSource.Key.MASTER_DATABASE_SOURCE_URL
+import cherhy.batch.settlement.lib.DataSource.Key.MASTER_DATABASE_SOURCE_USERNAME
+import cherhy.batch.settlement.lib.DataSource.Key.SLAVE_DATABASE_SOURCE_PASSWORD
+import cherhy.batch.settlement.lib.DataSource.Key.SLAVE_DATABASE_SOURCE_URL
+import cherhy.batch.settlement.lib.DataSource.Key.SLAVE_DATABASE_SOURCE_USERNAME
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.PortBinding
-import com.github.dockerjava.api.model.Ports
+import com.github.dockerjava.api.model.Ports.Binding.bindPort
 import org.flywaydb.core.Flyway
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -30,49 +36,56 @@ internal interface WithTestContainers {
         private fun injectProperties(
             registry: DynamicPropertyRegistry,
         ) {
-            registry.add(MASTER_DATABASE_SOURCE_URL) { postgresMaster.jdbcUrl }
-            registry.add(MASTER_DATABASE_SOURCE_USERNAME) { postgresMaster.username }
-            registry.add(MASTER_DATABASE_SOURCE_PASSWORD) { postgresMaster.password }
-            registry.add(SLAVE_DATABASE_SOURCE_URL) { postgresSlave.jdbcUrl }
-            registry.add(SLAVE_DATABASE_SOURCE_USERNAME) { postgresSlave.username }
-            registry.add(SLAVE_DATABASE_SOURCE_PASSWORD) { postgresSlave.password }
+            registry.add(MASTER_DATABASE_SOURCE_URL) { masterPostgres.jdbcUrl }
+            registry.add(MASTER_DATABASE_SOURCE_USERNAME) { masterPostgres.username }
+            registry.add(MASTER_DATABASE_SOURCE_PASSWORD) { masterPostgres.password }
+
+            registry.add(SLAVE_DATABASE_SOURCE_URL) { salvePostgres.jdbcUrl }
+            registry.add(SLAVE_DATABASE_SOURCE_USERNAME) { salvePostgres.username }
+            registry.add(SLAVE_DATABASE_SOURCE_PASSWORD) { salvePostgres.password }
         }
 
-        private val postgresMaster by lazy {
-            PostgreSQLContainer<Nothing>(Postgres.Master.IMAGE).apply {
+        private val masterPostgres by lazy {
+            PostgreSQLContainer<Nothing>(Postgres.Property.IMAGE).apply {
                 withCreateContainerCmdModifier {
                     it.withName(Postgres.Master.NAME)
                         .hostConfig
                         ?.portBindings
                         ?.add(
                             PortBinding(
-                                Ports.Binding.bindPort(Postgres.Master.BIND_PORT),
-                                ExposedPort(Postgres.Master.PORT),
+                                bindPort(Postgres.Master.BIND_PORT),
+                                ExposedPort(Postgres.Property.PORT),
                             )
                         )
                 }
-                withExposedPorts(Postgres.Master.PORT)
+                withExposedPorts(Postgres.Property.PORT)
                 withDatabaseName(Postgres.Master.DATABASE_NAME)
                 withUsername(Postgres.Master.USERNAME)
                 withPassword(Postgres.Master.PASSWORD)
-            //  TODO: withCommand() <- 여기에 slaveDB 동기화 로직을 넣어야함
+                withCommand(
+                    POSTGRES,
+                    ADD_OPTION, WAL_LEVEL,
+                    ADD_OPTION, MAX_WAL_SENDERS,
+                    ADD_OPTION, MAX_REPLICATION_SLOTS,
+                    ADD_OPTION, HOT_STANDBY,
+                )
             }
         }
 
-        private val postgresSlave by lazy {
-            PostgreSQLContainer<Nothing>(Postgres.Slave.IMAGE).apply {
+        private val salvePostgres by lazy {
+            PostgreSQLContainer<Nothing>(Postgres.Property.IMAGE).apply {
                 withCreateContainerCmdModifier {
                     it.withName(Postgres.Slave.NAME)
                         .hostConfig
                         ?.portBindings
                         ?.add(
                             PortBinding(
-                                Ports.Binding.bindPort(Postgres.Slave.BIND_PORT),
-                                ExposedPort(Postgres.Slave.PORT),
+                                bindPort(Postgres.Slave.BIND_PORT),
+                                ExposedPort(Postgres.Property.PORT),
                             )
                         )
                 }
-                withExposedPorts(Postgres.Slave.PORT)
+                withExposedPorts(Postgres.Property.PORT)
                 withDatabaseName(Postgres.Slave.DATABASE_NAME)
                 withUsername(Postgres.Slave.USERNAME)
                 withPassword(Postgres.Slave.PASSWORD)
@@ -82,14 +95,14 @@ internal interface WithTestContainers {
         private fun migrate() {
             Flyway.configure()
                 .dataSource(
-                    postgresMaster.jdbcUrl,
-                    postgresMaster.username,
-                    postgresMaster.password,
+                    masterPostgres.jdbcUrl,
+                    masterPostgres.username,
+                    masterPostgres.password,
                 )
                 .load()
                 .migrate()
         }
 
-        private val activeTestContainers = listOf(postgresMaster)
+        private val activeTestContainers = listOf(masterPostgres, salvePostgres)
     }
 }
