@@ -46,7 +46,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-    testImplementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2")
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
 }
 
