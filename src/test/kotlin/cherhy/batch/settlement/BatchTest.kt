@@ -1,10 +1,11 @@
 package cherhy.batch.settlement
 
-import cherhy.batch.settlement.FlywayConfigurer.flyway
 import cherhy.batch.settlement.entityfactory.ExampleEntityFactory
+import cherhy.batch.settlement.lib.WithTestContainers
 import cherhy.batch.settlement.lib.mapParallel
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -24,16 +25,12 @@ internal class BatchTest(
     @Autowired private val jobLauncherTestUtils: JobLauncherTestUtils,
     @Autowired private val jobRepositoryTestUtils: JobRepositoryTestUtils,
     @MockkBean private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
-) : StringSpec({
-    beforeTest {
-        flyway.migrate()
-    }
-
+) : WithTestContainers, StringSpec({
     afterEach {
         jobRepositoryTestUtils.removeJobExecutions()
     }
 
-    "데이터를 10,000개 생성하고 몇 초 걸리는지 확인한다" {
+    "데이터를 10,000개 병렬로 생성하고 몇 초 걸리는지 확인한다" {
         val randomExamples =
             measureTimedValue {
                 10_000.mapParallel(ExampleEntityFactory::generateRandom)
@@ -41,15 +38,11 @@ internal class BatchTest(
                 println("elapsedTime: ${it.duration} seconds")
             }.value
 
-        println("randomExamples: ${randomExamples.size}")
+        randomExamples.size shouldBe 10_000
     }
 
     "Job을 실행하고 listener가 실행되는지 확인한다" {
-        jdbcTemplate.execute(
-            """
-                insert into EXAMPLE (name, age) values ('test', 10)
-            """.trimIndent()
-        )
+        jdbcTemplate.execute("insert into EXAMPLE (name, age) values ('test', 10)")
 
         every { exampleJobCompletionNotificationListener.beforeJob() } just Runs
         every { exampleJobCompletionNotificationListener.afterJob() } just Runs
