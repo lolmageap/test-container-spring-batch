@@ -1,8 +1,9 @@
 package cherhy.batch.settlement
 
-import cherhy.batch.settlement.BatchProperties.Job.EXAMPLE_JOB
+import cherhy.batch.settlement.util.property.BatchProperties.Job.EXAMPLE_JOB
 import cherhy.batch.settlement.entityfactory.ExampleEntityFactory
 import cherhy.batch.settlement.entityfactory.JobParameterFactory
+import cherhy.batch.settlement.jdbc.example.process.ExampleJobCompletionNotificationListener
 import cherhy.batch.settlement.lib.WithTestContainers
 import cherhy.batch.settlement.lib.mapParallel
 import com.ninjasquad.springmockk.MockkBean

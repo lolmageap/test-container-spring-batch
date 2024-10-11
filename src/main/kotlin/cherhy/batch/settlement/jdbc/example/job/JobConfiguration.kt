@@ -1,14 +1,17 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.jdbc.example.job
 
-import cherhy.batch.settlement.BatchProperties.CHUNK_SIZE
-import cherhy.batch.settlement.BatchProperties.ItemProcessor.EXAMPLE_ITEM_PROCESSOR
-import cherhy.batch.settlement.BatchProperties.ItemReader.EXAMPLE_ITEM_READER
-import cherhy.batch.settlement.BatchProperties.ItemWriter.EXAMPLE_ITEM_WRITER
-import cherhy.batch.settlement.BatchProperties.Job.EXAMPLE_JOB
-import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_FIRST_STEP
-import cherhy.batch.settlement.BatchProperties.Step.EXAMPLE_LAST_STEP
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
+import cherhy.batch.settlement.jdbc.example.process.ExampleItemProcessor
+import cherhy.batch.settlement.jdbc.example.process.ExampleJobCompletionNotificationListener
+import cherhy.batch.settlement.model.Example
+import cherhy.batch.settlement.util.property.BatchProperties.CHUNK_SIZE
+import cherhy.batch.settlement.util.property.BatchProperties.ItemProcessor.EXAMPLE_ITEM_PROCESSOR
+import cherhy.batch.settlement.util.property.BatchProperties.ItemReader.EXAMPLE_ITEM_READER
+import cherhy.batch.settlement.util.property.BatchProperties.ItemWriter.EXAMPLE_ITEM_WRITER
+import cherhy.batch.settlement.util.property.BatchProperties.Job.EXAMPLE_JOB
+import cherhy.batch.settlement.util.property.BatchProperties.Step.EXAMPLE_FIRST_STEP
+import cherhy.batch.settlement.util.property.BatchProperties.Step.EXAMPLE_LAST_STEP
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
@@ -22,7 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.BeanPropertyRowMapper
-import org.springframework.jdbc.support.JdbcTransactionManager
+import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 @Configuration
@@ -30,7 +33,7 @@ class JobConfiguration(
     private val jobRepository: JobRepository,
     @Qualifier(MASTER_DATA_SOURCE) private val masterDataSource: DataSource,
     private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
-    @Qualifier(MASTER_TRANSACTION_MANAGER) private val transactionManager: JdbcTransactionManager,
+    @Qualifier(MASTER_TRANSACTION_MANAGER) private val transactionManager: PlatformTransactionManager,
 ) {
     @Bean(EXAMPLE_FIRST_STEP)
     fun firstStep() =

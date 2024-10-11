@@ -1,6 +1,6 @@
 package cherhy.batch.settlement.entityfactory
 
-import cherhy.batch.settlement.Example
+import cherhy.batch.settlement.model.Example
 import cherhy.batch.settlement.lib.randomize
 import org.jeasy.random.EasyRandom
 import org.jeasy.random.EasyRandomParameters

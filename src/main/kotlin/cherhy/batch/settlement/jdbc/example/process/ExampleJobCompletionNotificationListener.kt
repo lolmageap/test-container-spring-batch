@@ -1,6 +1,6 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.jdbc.example.process
 
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
 import mu.KotlinLogging
 import org.springframework.batch.core.annotation.AfterJob
 import org.springframework.batch.core.annotation.BeforeJob

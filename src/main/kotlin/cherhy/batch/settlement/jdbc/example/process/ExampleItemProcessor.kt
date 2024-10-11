@@ -1,5 +1,6 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.jdbc.example.process
 
+import cherhy.batch.settlement.model.Example
 import org.springframework.batch.item.ItemProcessor
 
 class ExampleItemProcessor : ItemProcessor<Example, Example> {

@@ -1,14 +1,15 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.config
 
-import cherhy.batch.settlement.ConfigurationConstants.Bean.JDBC_TEMPLATE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
-import cherhy.batch.settlement.ConfigurationConstants.Bean.ROUTING_DATA_SOURCE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.SLAVE_DATA_SOURCE
-import cherhy.batch.settlement.ConfigurationConstants.Bean.TRANSACTION_MANAGER
-import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.MASTER
-import cherhy.batch.settlement.ConfigurationConstants.DatabaseProfile.SLAVE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.JDBC_TEMPLATE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_DATA_SOURCE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_JDBC_TEMPLATE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.MASTER_TRANSACTION_MANAGER
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.ROUTING_DATA_SOURCE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.SLAVE_DATA_SOURCE
+import cherhy.batch.settlement.util.property.ConfigurationConstants.Bean.TRANSACTION_MANAGER
+import cherhy.batch.settlement.util.property.ConfigurationConstants.DatabaseProfile.MASTER
+import cherhy.batch.settlement.util.property.ConfigurationConstants.DatabaseProfile.SLAVE
+import cherhy.batch.settlement.util.property.DataSourceProperty
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.jdbc.DataSourceBuilder

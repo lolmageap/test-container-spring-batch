@@ -1,4 +1,4 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.util.property
 
 object BatchProperties {
     const val CHUNK_SIZE = 10

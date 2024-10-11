@@ -1,4 +1,4 @@
-package cherhy.batch.settlement
+package cherhy.batch.settlement.util.property
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
