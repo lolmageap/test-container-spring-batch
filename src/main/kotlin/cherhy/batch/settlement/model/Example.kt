@@ -1,6 +1,7 @@
 package cherhy.batch.settlement.model
 
 import cherhy.batch.settlement.annotation.Table
+import cherhy.batch.settlement.util.extension.toSnakeCase
 import java.math.BigDecimal
 
 @Table
@@ -12,9 +13,9 @@ data class Example(
     companion object {
         val memberPropertyNames
             get() = arrayOf(
-                Example::id.name,
-                Example::name.name,
-                Example::price.name,
+                Example::id.name.toSnakeCase(),
+                Example::name.name.toSnakeCase(),
+                Example::price.name.toSnakeCase(),
             )
     }
 }
