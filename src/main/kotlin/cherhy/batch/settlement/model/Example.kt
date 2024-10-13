@@ -13,9 +13,9 @@ data class Example(
     companion object {
         val memberPropertyNames
             get() = arrayOf(
-                Example::id.name.toSnakeCase(),
-                Example::name.name.toSnakeCase(),
-                Example::price.name.toSnakeCase(),
+                Example::id.toSnakeCase(),
+                Example::name.toSnakeCase(),
+                Example::price.toSnakeCase(),
             )
     }
 }
