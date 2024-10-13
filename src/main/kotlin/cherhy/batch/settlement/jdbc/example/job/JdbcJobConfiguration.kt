@@ -29,12 +29,20 @@ import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 @Configuration
-class JobConfiguration(
+class JdbcJobConfiguration(
     private val jobRepository: JobRepository,
     @Qualifier(MASTER_DATA_SOURCE) private val masterDataSource: DataSource,
     private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
     @Qualifier(MASTER_TRANSACTION_MANAGER) private val transactionManager: PlatformTransactionManager,
 ) {
+    @Bean(EXAMPLE_JOB)
+    fun job() =
+        JobBuilder(EXAMPLE_JOB, jobRepository)
+            .start(firstStep())
+            .next(lastStep())
+            .listener(exampleJobCompletionNotificationListener)
+            .build()
+
     @Bean(EXAMPLE_FIRST_STEP)
     fun firstStep() =
         StepBuilder(
@@ -54,14 +62,6 @@ class JobConfiguration(
         ).tasklet({ _: StepContribution?, _: ChunkContext? ->
             RepeatStatus.FINISHED
         }, transactionManager)
-            .build()
-
-    @Bean(EXAMPLE_JOB)
-    fun job() =
-        JobBuilder(EXAMPLE_JOB, jobRepository)
-            .start(firstStep())
-            .next(lastStep())
-            .listener(exampleJobCompletionNotificationListener)
             .build()
 
     @Bean(EXAMPLE_ITEM_READER)

@@ -1,45 +1,28 @@
 package cherhy.batch.settlement
 
-import cherhy.batch.settlement.util.property.BatchProperties.Job.EXAMPLE_JOB
-import cherhy.batch.settlement.entityfactory.ExampleEntityFactory
 import cherhy.batch.settlement.entityfactory.JobParameterFactory
 import cherhy.batch.settlement.jdbc.example.process.ExampleJobCompletionNotificationListener
 import cherhy.batch.settlement.lib.WithTestContainers
-import cherhy.batch.settlement.lib.mapParallel
+import cherhy.batch.settlement.util.property.BatchProperties.Job.EXAMPLE_JOB
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
-import io.mockk.verify
+import io.mockk.*
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.batch.test.JobRepositoryTestUtils
 import org.springframework.batch.test.context.SpringBatchTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.time.measureTimedValue
 
 @SpringBootTest
 @SpringBatchTest
-internal class BatchTest(
+internal class JdbcJobTest(
     @Autowired private val jobLauncherTestUtils: JobLauncherTestUtils,
     @Autowired private val jobRepositoryTestUtils: JobRepositoryTestUtils,
     @MockkBean private val exampleJobCompletionNotificationListener: ExampleJobCompletionNotificationListener,
 ) : WithTestContainers, StringSpec({
     afterEach {
         jobRepositoryTestUtils.removeJobExecutions()
-    }
-
-    "데이터를 10,000개 병렬로 생성하고 몇 초 걸리는지 확인한다" {
-        val randomExamples =
-            measureTimedValue {
-                10_000.mapParallel(ExampleEntityFactory::generateRandom)
-            }.also {
-                println("elapsedTime: ${it.duration} seconds")
-            }.value
-
-        randomExamples.size shouldBe 10_000
+        clearAllMocks()
     }
 
     "Job을 실행하고 listener가 실행되는지 확인한다" {
