@@ -17,5 +17,12 @@ data class Example(
                 Example::name.toSnakeCase(),
                 Example::price.toSnakeCase(),
             )
+
+        fun empty() =
+            Example(
+                id = 0,
+                name = "",
+                price = BigDecimal.ZERO,
+            )
     }
 }
