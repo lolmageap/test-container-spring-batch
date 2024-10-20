@@ -3,7 +3,7 @@ package cherhy.batch.settlement.util.extension
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
-class StringExtensionKtTest : StringSpec({
+class ConventionsTest : StringSpec({
     "toSnakeCase" {
         "hello_world".toSnakeCase() shouldBe "hello_world"
         "hello-world".toSnakeCase() shouldBe "hello_world"
