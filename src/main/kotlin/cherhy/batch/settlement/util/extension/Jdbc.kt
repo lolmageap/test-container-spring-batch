@@ -6,9 +6,8 @@ import kotlin.reflect.KClass
 inline fun <T : Any> JdbcTemplate.query(
     receiver: KClass<T>,
     block: () -> String,
-): T? {
-    return this.queryForObject(
+) =
+    this.queryForObject(
         block(),
         receiver.java,
     )
-}
