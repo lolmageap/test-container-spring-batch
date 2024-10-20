@@ -11,21 +11,28 @@ import org.springframework.jdbc.core.JdbcTemplate
 class JdbcTest(
     private val jdbcTemplate: JdbcTemplate,
 ) : WithTestContainers, StringSpec({
+
+    afterEach {
+        jdbcTemplate.execute("DELETE FROM example WHERE 1 = 1;")
+    }
+
     "findOne" {
-        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('책', 10000)")
+        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('책', 10000);")
 
         val example =
-            jdbcTemplate.findOne(
-                Example::class,
-            ) { "SELECT * FROM example WHERE name = '책'" }!!
+            jdbcTemplate.findOne(Example::class) {
+                "SELECT * FROM example WHERE name = '책'"
+            }!!
+
+        println("example: $example")
 
         example.name shouldBe "책"
-        example.price shouldBe 10000
+        example.price shouldBe 10000.toBigDecimal()
     }
 
     "findAll" {
-        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('책', 10000)")
-        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('컴퓨터', 20000)")
+        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('책', 10000);")
+        jdbcTemplate.execute("INSERT INTO example (name, price) VALUES ('컴퓨터', 20000);")
 
         val examples =
             jdbcTemplate.findAll(
@@ -35,9 +42,9 @@ class JdbcTest(
         examples.size shouldBe 2
 
         examples[0].name shouldBe "책"
-        examples[0].price shouldBe 10000
+        examples[0].price shouldBe 10000.toBigDecimal()
 
         examples[1].name shouldBe "컴퓨터"
-        examples[1].price shouldBe 20000
+        examples[1].price shouldBe 20000.toBigDecimal()
     }
 })
