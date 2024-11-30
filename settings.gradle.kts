@@ -1,1 +1,1 @@
-rootProject.name = "settlement"
+rootProject.name = "batch-test-container"
